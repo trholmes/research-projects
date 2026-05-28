@@ -2,10 +2,13 @@
 title: "Understanding Particle Lifetime"
 pi: "trholmes"
 goals:
-  - "Understand the steps it takes to get a muon to high energies"
-  - "Understand X at a working level"
-  - "Reproduce result Y from the paper"
-  - "Extend the approach to Z"
+  - "Understand the concept of particle lifetime"
+  - "Connect particle lifetime to concepts of distance traveled and special relativity"
+  - "Explore applications of this in collider physics, including B mesons and long-lived particles"
+  - "Produce a plot of B meson distance traveled as a function of its energy"
+  - "Use toy monte carlo to produce a full distribution and compare its mean to the analytical one"
+  - "Use the same concepts to simulate LLPs and identify best regions to search for their decays"
+  - "Extend this to a muon collider by looking at how quickly muons must be accelerated to be used in collisons" 
 ---
 
 # Project description
@@ -15,11 +18,3 @@ E.g. replicate the plot that shows the average distance traveled of a b meson as
 Then throw a toy MC and show that the full distribution -- and check the mean to show it is as expected.
 Then talk about LLPs in the detector and have them remake the plot that shows as a function of lifetime where decays are expected with one or two particles being detected.
 If there's time, extend this to a muon collider and figure out how fast you have to accelerate to have some percent of muons left over.
-
-Write the project description as the body of this Markdown file. This is what
-the student reads when choosing a project — and what the coach reads to
-understand the project context.
-
-Use whatever Markdown structure makes the description clear and readable:
-sections, sub-headings, bullet lists, equations, links. Be concrete about what
-the student will actually do and what a successful outcome looks like.
