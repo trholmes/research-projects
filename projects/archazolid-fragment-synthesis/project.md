@@ -1,6 +1,6 @@
 ---
 title: "Synthesis of the Archazolid Natural Products"
-pi: "oneil"
+pi: "ONeilg-glitch"
 goals:
   - "Explain what the archazolids are, why they are valuable, and why their natural supply is limiting"
   - "Explain why a complex natural product is built from smaller fragments rather than in one linear sequence"
