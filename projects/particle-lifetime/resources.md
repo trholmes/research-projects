@@ -1,7 +1,7 @@
 # Recommended resources
 
 These are the recommended readings and references for the
-*Understanding Particle Lifetime* project. They support the physics
+*Particle Lifetime and Discovery at the LHC* project. They support the physics
 background you will need for the calculations, the simulation, and the
 written explanation. You do not need to read all of them; pick the level
 that matches your background and use the rest as references.

@@ -1,5 +1,5 @@
 ---
-title: "Understanding Particle Lifetime"
+title: "Particle Lifetime and Discovery at the LHC"
 pi: "trholmes"
 goals:
   - "Understand what it means for a particle to have a lifetime and why it is probabilistic"
@@ -11,7 +11,7 @@ goals:
   - "Apply the same physics to long-lived particle (LLP) searches and identify optimal search strategies as a function of lifetime"
 ---
 
-# Research Project: Understanding Particle Lifetime
+# Research Project: Particle Lifetime and Discovery at the LHC
 
 ## Project overview
 
