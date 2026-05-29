@@ -2,13 +2,13 @@
 title: "Understanding Particle Lifetime"
 pi: "trholmes"
 goals:
-  - "Understand the concept of particle lifetime"
-  - "Connect particle lifetime to concepts of distance traveled and special relativity"
-  - "Explore applications of this in collider physics, including B mesons and long-lived particles"
-  - "Produce a plot of B meson distance traveled as a function of its energy"
-  - "Use toy monte carlo to produce a full distribution and compare its mean to the analytical one"
-  - "Use the same concepts to simulate LLPs and identify best regions to search for their decays"
-  - "Extend this to a muon collider by looking at how quickly muons must be accelerated to be used in collisions"
+  - "Understand what it means for a particle to have a lifetime and why it is probabilistic"
+  - "Distinguish between detecting particles directly and inferring them from decay products"
+  - "Connect particle lifetime to laboratory decay distance through special relativity"
+  - "Understand why b-quark lifetime makes b-tagging possible, and why that matters for the Higgs"
+  - "Produce a plot of B meson decay length as a function of energy"
+  - "Use toy Monte Carlo to produce a full decay distribution and recover the lifetime from it"
+  - "Apply the same physics to long-lived particle (LLP) searches and identify optimal search strategies as a function of lifetime"
 ---
 
 # Research Project: Understanding Particle Lifetime
@@ -20,29 +20,55 @@ particle to have a *lifetime*, and you will turn that understanding into
 concrete calculations and plots that connect directly to how experiments at
 the Large Hadron Collider (LHC) actually work.
 
-Many fundamental particles are unstable. They exist for a short time and then
-decay into other particles. A key idea you will develop is that a particle's
-lifetime is *probabilistic*: you can never predict exactly when a single
-particle will decay, but for a large collection of identical particles, the
-pattern of decays is completely predictable. This is one of the places where
-the strangeness of quantum mechanics shows up in a way you can plot.
+The organizing question of this project is simple but deep: when a particle is
+produced in a collision, how does an experiment know it was there? For some
+particles — stable ones like electrons or photons — the answer is direct: they
+travel through the detector and leave signals. For unstable particles, the
+answer is more subtle. You cannot see them directly; you have to infer their
+existence from the particles they decay into. And a particle's **lifetime** is
+what determines which of these two strategies applies — and whether an
+experiment can detect the particle at all.
 
-Your main goal is to understand how this probabilistic lifetime, combined with
-special relativity, determines how far a particle travels before it decays in
-a real detector. You will apply this to the *b quark* (and the B mesons it
-forms), which is central to studying the Higgs boson at the LHC. You will
-produce a plot of how far a B meson typically travels as a function of its
-energy, and then you will build a small simulation, called a **toy Monte
-Carlo**, that reproduces the full distribution of decay distances and lets you
-recover the particle's lifetime from the data you generate.
+You will follow this idea from its most basic form through to research-level
+applications. Starting with the LHC and its detectors, you will develop a
+working understanding of particle lifetime as a probabilistic quantity, connect
+it to laboratory decay distance through special relativity, and apply it to the
+b quark — whose lifetime is why the Higgs decay \(H \to b\bar{b}\) can be
+studied at all. You will produce a plot of how far a B meson typically travels
+as a function of its energy, build a **toy Monte Carlo** to simulate the full
+distribution of decay distances, and then apply the same physics framework to
+searches for hypothetical long-lived particles (LLPs) beyond the Standard
+Model, reasoning about which search strategy makes sense for which lifetime.
 
-This project is designed for beginning physics students, ideally as a first
-project in particle physics. You are not expected to know any particle physics
-or special relativity at a research level when you start. By the end, you
-should be able to explain what a particle lifetime is, why it is probabilistic,
-how relativity stretches it out in the laboratory, and how experiments exploit
-all of this to identify b quarks. You will also strengthen your ability to use
-Python for scientific calculation, simulation, and plotting.
+This project is designed for beginning physics students as a first project in
+particle physics. You are not expected to know any particle physics or special
+relativity at a research level when you start. By the end, you should be able
+to explain what a particle lifetime is, why it is probabilistic, how relativity
+stretches it out in the laboratory, why the b quark's lifetime makes it
+detectable, and how the same reasoning applies to BSM searches. You will also
+strengthen your ability to use Python for scientific calculation, simulation,
+and plotting.
+
+### Working at different levels
+
+Students arrive at this project with very different backgrounds, and that is
+expected. Two prerequisites do most of the work here: a little **special
+relativity** (just time dilation) and a little **scientific Python** (NumPy,
+Matplotlib, and one curve fit). You do not need either in advance — both have
+on-ramps built into the project:
+
+- Step 5 begins with a self-check on special relativity and points you to a
+  single section of reading if you need it.
+- Step 8 (the simulation) is where the most Python is required; `resources.md`
+  lists the three libraries you need and beginner-friendly tutorials for each.
+
+If a concept is already familiar, move through that step quickly — the "check
+your understanding" questions are a fast way to confirm you can skip ahead. If
+a concept is new, slow down and use the linked resource before continuing; the
+steps are ordered so that nothing later depends on something you skipped. The
+core physics path runs through Step 8. Steps 9–11 and the stretch goal go
+further into real research questions, and are the natural place for stronger
+students to spend extra time.
 
 ---
 
@@ -112,69 +138,91 @@ At the end of the project, you should produce:
 
 ## Suggested workflow
 
-### Step 1: Get oriented with fundamental particles
+### Step 1: The LHC, particle collisions, and detectors
 
-Before talking about lifetimes, make sure you have a working picture of which
-particles exist and how they are organized.
+Before anything else, build a working picture of the experimental setting this
+project lives in.
 
-Spend some time with the recommended reading (see `resources.md`) to get
-comfortable with:
+Read enough about the LHC and its experiments (see `resources.md`) to be able
+to describe:
 
-- the idea of a *fundamental* particle (quarks, leptons, gauge bosons, the
-  Higgs)
-- the difference between fundamental particles and *composite* particles such
-  as protons, neutrons, and mesons
-- where the b quark and the B mesons it forms sit in this picture
+- what the LHC is: a circular accelerator that brings two beams of protons to
+  very high energies and causes them to collide
+- roughly what energies are involved (the LHC currently runs at 13–14 TeV
+  center-of-mass energy), and what a "collision event" means
+- what the ATLAS and CMS detectors are: large, layered instruments built
+  concentrically around the collision point, designed to reconstruct the
+  particles produced in each collision
 
-It is worth holding this division with a little healthy skepticism. What counts
-as "fundamental" has changed repeatedly throughout the history of physics.
-Atoms were once thought to be indivisible; protons and neutrons were once
-treated as elementary before quarks were proposed; and there are open questions
-today about whether the particles we currently call fundamental have any deeper
-structure. Treat "fundamental" as "fundamental as far as we can currently
-tell," not as a permanent label.
+A detector like CMS has several distinct layers, moving outward from the
+collision point: a silicon pixel tracker, a silicon strip tracker, an
+electromagnetic calorimeter, a hadronic calorimeter, and muon chambers
+embedded in an iron return yoke. Each layer is sensitive to different kinds of
+particles and serves a different role in reconstructing what happened in the
+collision.
 
-Suggested resources for this step (these belong in `resources.md`):
+Now comes the central question of this whole project. When particles are
+produced in a collision, there are two fundamentally different ways a detector
+can learn about them:
 
-- OpenStax *University Physics*, the chapter on particle physics, for a gentle
-  first pass.
-- For students who want more depth, the Introduction and first two chapters of
-  Griffiths, *Introduction to Elementary Particles*.
-- The Particle Data Group (PDG) Reviews and Summary Tables, which are the
-  standard reference for particle properties such as masses and lifetimes.
-- A short description of the CMS detector geometry, especially the beam pipe
-  and the layers of the pixel/silicon tracker, since you will need approximate
-  radii later. (We will collect specific, citable numbers in `resources.md`.)
+1. **Direct detection:** a stable (or very long-lived) particle travels through
+   the detector and deposits energy directly. Photons, electrons, muons, and
+   hadrons can all be detected this way.
 
-You do not need to master any of this. The goal is to be able to say, in your
-own words, what a b quark is and roughly where it lives in the particle
-landscape.
+2. **Inference from decay products:** an unstable particle does not live long
+   enough to reach the sensitive parts of the detector. Instead, it decays, and
+   what the detector actually sees are the daughter particles from that decay.
+   You infer that the parent particle existed by reconstructing the decay.
+
+This distinction is not a technical detail. It shapes every analysis strategy
+in experimental particle physics. Notice that in the second case, the
+particle's **lifetime** is what determines whether the decay happens inside the
+detector, outside it, or somewhere interesting in between.
+
+Check your understanding before moving on:
+
+- Name one particle that can be detected directly and one that must be inferred
+  from its decay products. Why does each fall into its category?
+- A particle is produced at the collision point. It is unstable, but its
+  lifetime is so short that it decays before traveling even a fraction of a
+  millimeter. Can its daughter particles still be detected? How?
+- A particle's lifetime is so long that it almost always escapes the entire
+  detector before decaying. How does the experiment know it was there at all?
+- What is it about "intermediate" lifetimes that makes them the most
+  interesting case for experimental reconstruction?
 
 ### Step 2: Understand lifetime as a probabilistic quantity
+
+With the experimental setting established, you are ready to think carefully
+about what "lifetime" means for a particle.
 
 You may already have met the idea of a **half-life** when learning about
 radioactive isotopes. A sample of a radioactive isotope does not all decay at
 once; instead, after one half-life, half of it remains, after two half-lives a
-quarter remains, and so on.
-
-Particle lifetimes work the same way. The relationship between the half-life
-\(t_{1/2}\) and the mean lifetime \(\tau\) is
+quarter remains, and so on. Particle lifetimes work the same way: if you
+prepare a large number \(N_0\) of identical particles, the number still
+surviving after a proper time \(t\) follows
 
 \[
-t_{1/2} = \tau \ln 2 .
+N(t) = N_0 \, e^{-t/\tau},
+\]
+
+where \(\tau\) is the **mean lifetime** measured in the particle's own rest
+frame. The relationship between the mean lifetime and the half-life is
+
+\[
+t_{1/2} = \tau \ln 2.
 \]
 
 The crucial conceptual point is this: you cannot predict when a *single*
-particle will decay. A given B meson might decay almost immediately, or it
+particle will decay. A given particle might decay almost immediately, or it
 might last much longer than average. What is predictable is the *shape* of the
 distribution for a large ensemble: an exponential, governed by the single
 number \(\tau\).
 
 This is not a statement about our ignorance or our equipment. It is a
-fundamental feature of quantum mechanics. The same probabilistic character
-shows up in many other particle properties, not just lifetimes. Quantum
-mechanics generally tells you the probabilities of outcomes, not the outcome of
-any single measurement.
+fundamental feature of quantum mechanics. Quantum mechanics generally tells you
+the probabilities of outcomes, not the outcome of any single measurement.
 
 Check your understanding before moving on:
 
@@ -187,32 +235,64 @@ Check your understanding before moving on:
   histogrammed them, what shape would you expect, and what sets its scale?
 - Why is it meaningful to quote a lifetime for a particle even though you can
   never predict the fate of one individual particle?
+- Returning to Step 1: if a particle has a very short lifetime (much less than
+  a nanosecond), does it fall into the "direct detection" or "inference from
+  decay products" category? What about a particle with a lifetime of microseconds?
 
-### Step 3: Meet the LHC, ATLAS, CMS, and the Higgs
+### Step 3: Get oriented with fundamental particles
 
-Now connect lifetimes to where they get measured. Read enough about the LHC and
-its experiments to be able to describe:
+Now that you have the experimental context and a grasp of what lifetime means,
+build up a picture of the particle landscape you will be working in.
 
-- how the LHC accelerates and collides protons, and roughly what energies are
-  involved
-- what the ATLAS and CMS experiments are, and the general idea that they are
-  large, layered detectors built around the collision point
-- that collisions produce sprays of particles, many of which are unstable and
-  decay almost immediately
+Spend some time with the recommended reading (see `resources.md`) to get
+comfortable with:
 
-A key player here is the **Higgs boson**. When a Higgs boson is produced and
-decays, its single most common decay is into a b quark and an anti-b quark
-(\(H \to b\bar{b}\)). That makes the ability to identify b quarks essential for
-studying the Higgs.
+- the idea of a *fundamental* particle (quarks, leptons, gauge bosons, the
+  Higgs)
+- the difference between fundamental particles and *composite* particles such
+  as protons, neutrons, and mesons
+- the Particle Data Group (PDG) as the standard reference for particle
+  properties such as masses and lifetimes — you will use it repeatedly
 
-How do you identify a b quark? You do not see the quark directly. A b quark
-*hadronizes*, meaning it combines with other quarks to form a B hadron (such as
-a B meson) almost immediately. That B meson is unstable and travels a short but
-measurable distance before decaying. Because B mesons live relatively long for
-particles of their kind, they travel far enough to produce a **secondary
-vertex**: a decay point that is measurably displaced from the original
-collision point. Reconstructing that displaced vertex from the tracks of the
-decay products is the basis of "b-tagging."
+It is worth holding the label "fundamental" with a little healthy skepticism.
+What counts as fundamental has changed repeatedly throughout the history of
+physics. Treat it as "fundamental as far as we can currently tell."
+
+You do not need to master any of this. The goal is to have enough vocabulary to
+proceed to the next step.
+
+### Step 4: B quarks, B mesons, and why they matter for the Higgs
+
+Now you are ready to meet the particle that is the main character of this
+project, but for a specific reason: it is essential for studying the Higgs
+boson.
+
+The **Higgs boson** is the most recently discovered fundamental particle in the
+Standard Model, observed at the LHC in 2012. Its most common decay is into a b
+quark and an anti-b quark (\(H \to b\bar{b}\)), occurring about 58% of the
+time. That means the ability to identify b quarks is essential for studying the
+Higgs. This is the physics motivation for everything that follows.
+
+But here is the complication: you do not detect the b quark directly. A b
+quark *hadronizes*, meaning it quickly combines with other quarks to form a B
+hadron (such as a B meson) almost immediately after being produced. That B
+meson is unstable and eventually decays into lighter particles.
+
+Now recall the two detection strategies from Step 1: direct detection versus
+inference from decay products. Which one applies to the B meson?
+
+The answer is: B mesons fall into a particularly fortunate intermediate case.
+Their lifetime (\(\tau \sim 1.5 \times 10^{-12}~\mathrm{s}\), i.e. about 1.5
+picoseconds) is short enough that they decay inside the detector, but long
+enough that they travel a small but **measurable** distance before decaying.
+This distance is typically a few millimeters — just large enough for a
+precision silicon tracker to resolve. The decay point is then displaced from
+the original collision point, forming a **secondary vertex**.
+
+Reconstructing that secondary vertex from the tracks of the decay products is
+the basis of **b-tagging**: the technique by which LHC experiments identify
+jets that contain a b quark, and the reason the Higgs decay \(H \to b\bar{b}\)
+can be studied at all.
 
 Make sure you can answer:
 
@@ -220,13 +300,37 @@ Make sure you can answer:
 - What does it mean for a quark to hadronize?
 - What is a secondary vertex, and why does the b quark's lifetime make one
   possible?
-- Roughly how big do you expect this displacement to be? (You will calculate it
-  next.)
+- Why would b-tagging be impossible if the B meson lifetime were a thousand
+  times shorter? What if it were a thousand times longer?
+- Why does finding \(H \to b\bar{b}\) decays require b-tagging?
 
-### Step 4: Lab frame versus proper frame, and a hand calculation
+### Step 5: Lab frame versus proper frame, and a hand calculation
 
-Before plotting anything, do one calculation by hand so the later code has
+Before diving in, a quick check: this step requires special relativity —
+specifically time dilation and the Lorentz factor \(\gamma\). Have you seen
+these before?
+
+- **If yes** and you are comfortable with \(\gamma = 1/\sqrt{1-\beta^2}\) and
+  why a moving particle's clock runs slow, proceed directly.
+- **If no**, or if you have seen it but it feels shaky, read
+  [OpenStax University Physics Vol. 3, Section 5.3 (Time Dilation)](https://openstax.org/books/university-physics-volume-3/pages/5-3-time-dilation)
+  before continuing. The key idea is in that one section; the rest of Chapter 5
+  is useful context but not required for this step.
+
+The minimum you need: a particle moving at speed \(\beta c\) has its internal
+clock slowed by a factor \(\gamma\), so a rest-frame lifetime \(\tau\) becomes
+a lab-frame lifetime \(\gamma\tau\). That is all the relativity this step uses.
+
+Now, before plotting anything, do one calculation by hand so the later code has
 something to check against.
+
+One convention to settle first: particle physicists work in **natural units**,
+where \(c = 1\) and mass, momentum, and energy are all quoted in GeV. That is
+why we can write "a B meson of momentum \(p = 50~\mathrm{GeV}\)" and why
+\(\beta\gamma = p/(Mc)\) simplifies to \(\beta\gamma = p/M\), just a ratio of
+two numbers in GeV. If that looks odd to you (momentum in energy units?), it is
+a deliberate, standard convention — see the short "natural units" note in
+`resources.md` before proceeding.
 
 Look up (and record in `resources.md`) the B meson's mass \(M \approx
 5.28~\mathrm{GeV}\) and its decay length \(c\tau\), which is roughly half a
@@ -234,7 +338,7 @@ millimeter (about \(0.5~\mathrm{mm}\); look up the precise value for the
 specific B meson you choose, since they differ slightly). Then, for an example
 momentum, say \(p = 50~\mathrm{GeV}\), compute:
 
-1. \(\beta\gamma = p / (Mc)\) (in natural units, \(\beta\gamma = p / M\)),
+1. \(\beta\gamma = p / (Mc) = p / M\) in natural units,
 2. the mean laboratory decay length \(L = \beta\gamma\, c\tau\).
 
 You should find a value of a few millimeters. Keep this number; you will mark it
@@ -261,7 +365,7 @@ Check your understanding:
 - If you doubled the momentum of the B meson, what would happen to its average
   laboratory decay length, and why?
 
-### Step 5: Plot the average decay length versus energy
+### Step 6: Plot the average decay length versus energy
 
 Now reproduce, in code, the relationship you just calculated by hand.
 
@@ -269,7 +373,7 @@ Make a plot of the mean laboratory decay length \(L = \beta\gamma c\tau\) as a
 function of the B meson's energy (or momentum). Iterate on it until you are
 confident it is correct:
 
-- Mark your hand-calculated point from Step 4 on the curve and confirm it lands
+- Mark your hand-calculated point from Step 5 on the curve and confirm it lands
   where the formula predicts.
 - Check the limiting behavior. At high momentum, how should \(L\) scale with
   \(p\)? Does your curve behave that way?
@@ -297,9 +401,9 @@ Instead, the meson decays in the beam-pipe region, and the precise tracker
 measures the charged decay products and extrapolates them back to reconstruct
 the displaced secondary vertex.
 
-### Step 6: From the average to the full distribution
+### Step 7: From the average to the full distribution
 
-The plot in Step 5 shows only the *mean* decay length. But you already know
+The plot in Step 6 shows only the *mean* decay length. But you already know
 from Step 2 that decays are spread out exponentially. Two B mesons with the same
 energy will travel different distances.
 
@@ -317,16 +421,22 @@ P(L > d) = e^{-d / (\beta\gamma c\tau)} .
 
 Evaluate this for your chosen energy and the first-layer radius. You should find
 that the fraction is very small at typical energies, reinforcing the picture
-from Step 5. Make sure you can explain in words why this fraction is so small,
+from Step 6. Make sure you can explain in words why this fraction is so small,
 and how it depends on energy.
 
-### Step 7: Build a toy Monte Carlo
+### Step 8: Build a toy Monte Carlo
 
 A **toy Monte Carlo** is a simple simulation that generates pseudo-random
 "events" according to a known probability distribution, so you can study the
 distribution by sampling from it rather than only by calculating with formulas.
 It is one of the most common tools in experimental particle physics, and this
 project is a good first place to learn it.
+
+This is the step that uses the most Python: random sampling, histogramming, and
+a curve fit. If you are comfortable with NumPy and `scipy.optimize.curve_fit`,
+proceed directly. If any of those are new, see the "Computational tools" note
+in `resources.md` for the three libraries you need and short tutorials for
+each — it is worth a few minutes there before you start coding.
 
 For a chosen B meson energy, build a toy Monte Carlo of the decay distance:
 
@@ -361,7 +471,94 @@ Check your understanding:
   the likely causes (statistics, binning, fit range)?
 - How would the distribution change if you chose a higher energy?
 
-### Step 8: Write the explanation
+### Step 9: Long-lived particles and BSM searches
+
+So far you have studied the B meson, a particle we already know exists. But
+particle physicists also search for hypothetical particles predicted by theories
+that go beyond the Standard Model (BSM theories). Many such theories predict
+new particles with lifetimes far longer than the B meson's — particles that
+could travel centimeters, meters, or even further before decaying. These are
+called **long-lived particles (LLPs)**.
+
+Return to the framing from Step 1. The same two detection strategies apply here:
+
+- **Direct detection:** if an LLP is stable enough to reach the calorimeters or
+  muon systems, it may deposit energy directly, much like a known stable
+  particle would.
+- **Inference from decay products:** if an LLP decays inside the tracking
+  volume, you cannot see the LLP itself — you reconstruct it from its
+  displaced decay products, exactly as with the B meson but potentially with
+  a much larger displacement.
+
+And there is a third regime unique to very long lifetimes: the particle escapes
+the detector entirely without decaying, leaving only **missing transverse
+energy** (MET) as evidence. This is how we search for particles that interact
+only weakly with matter (like dark matter candidates).
+
+The challenge for LLP searches is that the optimal detection strategy depends
+strongly on where the LLP actually decays, which depends on its lifetime. Using
+the probability formula from Step 7, investigate this quantitatively.
+
+The probability of decaying within a detector shell between radii \(r_1\) and
+\(r_2\) is
+
+\[
+P(r_1 < L < r_2) = e^{-r_1/(\beta\gamma c\tau)} - e^{-r_2/(\beta\gamma c\tau)} .
+\]
+
+To make this a well-defined question, fix the LLP's kinematics and vary only
+its lifetime. Choose a representative mass and momentum for X (state your
+choice), which fixes \(\beta\gamma = p/M\), and then sweep \(c\tau\) over a wide
+range — from well below a millimeter to well above the size of the detector
+(many orders of magnitude, so use a logarithmic axis).
+
+Make a plot showing, as a function of the LLP's \(c\tau\) (or lifetime), what
+fraction of decays fall in different detector regions: inside the tracker,
+between the tracker and calorimeter, in the calorimeter, and outside the
+detector entirely (i.e., the "escaping" fraction). Use the approximate
+subdetector outer radii tabulated in `resources.md`.
+
+Check your understanding:
+
+- For a very short \(c\tau\) (much less than a millimeter), where do most
+  decays happen? Does the "direct detection vs. decay products" framing still
+  apply, or does a new regime emerge?
+- For a very long \(c\tau\) (many meters), what does the detector mostly "see"?
+- At what \(c\tau\) range is the tracker the most useful subdetector for
+  finding LLP decays?
+- At what \(c\tau\) range does the calorimeter or muon system become the best
+  place to look?
+
+### Step 10: Which search strategy makes sense when?
+
+You now have all the pieces to think about LLP search design as a physicist
+would. The same question that structured the whole project — direct measurement
+versus inference from decay products — now becomes a practical question about
+where to spend your analysis effort.
+
+Consider an experiment that discovers a new signal with an unknown particle X
+at an unknown mass and lifetime. Think through the following scenarios:
+
+- **Scenario A:** X has \(c\tau \sim 1~\mathrm{mm}\). Where does it decay? Can
+  you reconstruct a secondary vertex? Is direct detection relevant? What search
+  strategy would you design?
+
+- **Scenario B:** X has \(c\tau \sim 1~\mathrm{m}\). Now where does it mostly
+  decay? How does your strategy change? What subdetectors become important?
+
+- **Scenario C:** X has \(c\tau \gg 100~\mathrm{m}\). What does the detector
+  see? How do you search for X if it almost never decays inside the detector?
+
+- **Scenario D:** You do not know X's lifetime ahead of time. You need to
+  design a search that is sensitive across a wide range. What challenges does
+  this pose? What could you do?
+
+For each scenario, explain which detection strategy you would use and why, and
+connect your reasoning to the calculations you made in Steps 6–9. There is no
+single right answer to the design question; the goal is to reason carefully
+from the physics.
+
+### Step 11: Write the explanation
 
 Your short written explanation should describe not just what you did, but what
 you learned. It should answer questions such as:
@@ -372,41 +569,15 @@ you learned. It should answer questions such as:
   why?
 - What is the difference between the rest frame and the laboratory frame, and
   why is there no meaningful "proper distance traveled"?
-- How do experiments use the b quark's lifetime to identify it?
+- How do experiments use the b quark's lifetime to identify it, and why is this
+  essential for studying the Higgs boson?
 - What did your toy Monte Carlo teach you that the average value alone did not?
+- How does the LLP search strategy depend on the particle's lifetime, and which
+  subdetector is most useful in which regime?
 
 ---
 
-## Stretch goal 1: Long-lived particles (LLPs)
-
-The B meson is a relatively long-lived particle by the standards of collider
-physics, but many proposed new particles would live far longer, traveling
-centimeters or even meters before decaying. These are called **long-lived
-particles (LLPs)**, and searching for their displaced decays is an active area
-of research.
-
-Using the same machinery you built above, investigate where in a detector such
-particles would decay. The probability of decaying within a shell between radii
-\(r_1\) and \(r_2\) is
-
-\[
-P(r_1 < L < r_2) = e^{-r_1/(\beta\gamma c\tau)} - e^{-r_2/(\beta\gamma c\tau)} .
-\]
-
-Your goals for this section:
-
-1. Remake a plot, this time as a function of the particle's lifetime (or
-   \(c\tau\)), showing the fraction of decays expected in different detector
-   regions (for example, inside the tracker, between the tracker and
-   calorimeter, or out in the muon system).
-2. Think about what it takes to actually *detect* such a decay, for example
-   requiring that one or two of the decay products be reconstructed in a
-   particular subdetector.
-3. Identify which range of lifetimes is best searched for in each region. There
-   is no single best detector region; the optimal place to look depends
-   strongly on the particle's lifetime.
-
-### Stretch goal 2: Muons at a muon collider
+## Stretch goal: Muons at a muon collider
 
 A muon collider is a proposed future machine that would collide muons instead
 of protons or electrons. Muons are attractive because they are fundamental
@@ -439,15 +610,15 @@ Submit the following:
 - A plot of B meson mean decay length versus energy
 - A toy Monte Carlo of the decay distribution, including the mean check and the
   fitted lifetime
+- A plot of LLP decay fractions by detector region as a function of lifetime
+- A written discussion of LLP search strategies in each lifetime regime
 - A clean Python notebook or script
 - A short written explanation of the science behind the project
 
-Optional bonus deliverables:
+Optional bonus deliverable:
 
-- A plot of LLP decay fractions by detector region as a function of lifetime,
-  with a discussion of where to search
 - A calculation of muon survival fraction for a muon collider, with a
-  discussion of the acceleration requirement
+  discussion of the acceleration requirement (see the stretch goal above)
 
 ---
 
@@ -461,16 +632,24 @@ By the end, you should be able to say:
 - I understand that a particle's lifetime is probabilistic, and I can explain
   what that means.
 - I can relate particle lifetime to the more familiar idea of half-life.
+- I understand the difference between detecting a particle directly and
+  inferring its existence from its decay products, and I can explain which
+  strategy applies in which situation.
 - I understand how special relativity turns a fixed rest-frame lifetime into an
   energy-dependent distance in the laboratory, and why there is no "proper
   distance traveled."
 - I can compute and plot how far a B meson typically travels, and connect that
   to the real geometry of a detector like CMS.
-- I understand why the b quark's lifetime is what makes b-tagging possible.
+- I understand why the b quark's lifetime is what makes b-tagging possible, and
+  why b-tagging matters for studying the Higgs boson.
 - I can build a toy Monte Carlo, check its mean against theory, and fit it to
   recover the input lifetime.
+- I can explain why the optimal LLP search strategy depends on the particle's
+  lifetime, and identify which detector region is most useful in which regime.
 - I can use Python to create clear scientific plots and simulations.
 
 The goal is not just to make a plot. The goal is to use these calculations and
 simulations to understand how a deeply quantum, probabilistic property of
-matter becomes something an experiment can measure.
+matter becomes something an experiment can measure — and to see how the same
+physics reasoning applies across a wide range of experimental questions, from
+Standard Model measurements to searches for new physics.

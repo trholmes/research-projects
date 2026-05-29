@@ -22,6 +22,30 @@ which introduce:
   still an open question
 - where quarks such as the b quark fit into the picture
 
+## Special relativity background
+
+**[OpenStax, _University Physics Volume 3_, Chapter 5: Relativity](https://openstax.org/books/university-physics-volume-3/pages/5-introduction)**
+
+If you have not encountered special relativity before — or if you have seen it
+but are not yet comfortable with time dilation and the Lorentz factor — start
+here before Step 5. This chapter is freely available online and covers
+everything you need:
+
+- [5.3 Time Dilation](https://openstax.org/books/university-physics-volume-3/pages/5-3-time-dilation):
+  why a moving clock runs slow, the Lorentz factor \(\gamma = 1/\sqrt{1-\beta^2}\),
+  and what "proper time" means
+- [5.4 Length Contraction](https://openstax.org/books/university-physics-volume-3/pages/5-4-length-contraction):
+  useful context, though less central to this project than time dilation
+- [5.6 Relativistic Velocity Transformation](https://openstax.org/books/university-physics-volume-3/pages/5-6-relativistic-velocity-transformation)
+  and the momentum/energy relations in 5.8–5.9, for background on \(\beta\gamma = p/(Mc)\)
+
+The key concept you need for this project is time dilation: a clock moving at
+speed \(\beta c\) relative to you appears to tick slowly by a factor of
+\(\gamma\). A particle with a rest-frame lifetime \(\tau\) therefore lives for
+a time \(\gamma\tau\) in your lab frame, and travels a mean distance
+\(\beta\gamma c\tau\) before decaying. If that sentence already makes sense to
+you, you may not need this chapter at all.
+
 ## Going deeper
 
 **David Griffiths, _Introduction to Elementary Particles_**
@@ -63,9 +87,10 @@ Use these for the overall layered structure of CMS: the silicon tracker
 (pixels and microstrips) nearest the beam, then the electromagnetic and
 hadron calorimeters, the solenoid, and the muon system in the return yoke.
 
-For the specific radii you need in the decay-length steps, the most precise
-public reference is **_The CMS Phase-1 Pixel Detector Upgrade_, JINST 16 (2021)
-P02027** (linked from the Tracking page above). The key numbers:
+For the precise inner radii you need in the B-meson decay-length steps (Steps 6
+and 7), the most precise public reference is **_The CMS Phase-1 Pixel Detector
+Upgrade_, JINST 16 (2021) P02027** (linked from the Tracking page above). The
+key numbers:
 
 - Beam pipe radius: about **22 mm** for the current (Phase-1) layout, reduced
   from about **30 mm** in the original detector.
@@ -75,6 +100,59 @@ P02027** (linked from the Tracking page above). The key numbers:
 
 These are the values to use when asking whether a B meson typically decays
 inside the beam pipe or after the first tracker layer.
+
+For the LLP step (Step 9) you need the *outer* boundaries of the major
+subdetectors as well. The CMS detector is roughly cylindrical, and the
+following approximate barrel radii are good enough for this project (see the
+[CMS Detector Overview](https://cms.cern/news/detector-overview) for the full
+layout):
+
+| Region (outer edge)           | Approx. radius |
+|-------------------------------|----------------|
+| Silicon tracker (outer edge)  | ~1.1 m         |
+| Electromagnetic calorimeter   | ~1.5 m         |
+| Hadron calorimeter            | ~2.9 m         |
+| Superconducting solenoid      | ~3.8 m         |
+| Muon system (outer edge)      | ~7.4 m         |
+
+These are approximate, round numbers chosen for an order-of-magnitude exercise,
+not precise survey values. State the radii you adopt in your write-up. (ATLAS
+is larger — its muon system extends to about 11 m — but the qualitative picture
+is the same; pick one detector and be consistent.)
+
+## A note on natural units
+
+Particle physicists almost always work in **natural units**, where the speed of
+light is set to \(c = 1\). In this convention, mass, momentum, and energy are
+all measured in the same units (electron-volts, usually GeV), and you can write
+things like "a B meson of momentum \(p = 50~\mathrm{GeV}\)" without carrying
+factors of \(c\) around. This is why \(\beta\gamma = p/(Mc)\) simplifies to
+\(\beta\gamma = p/M\): with \(c = 1\), the formula is just a ratio of two
+numbers both quoted in GeV.
+
+If you have only ever seen SI units, this can look like a mistake the first
+time ("isn't momentum in kg·m/s?"). It is not — it is a deliberate, standard
+convention, and the PDG "Kinematics" review explains it. For this project you
+can take the shortcut rule: **in natural units, \(\beta\gamma = p/M\) with \(p\)
+and \(M\) both in GeV**, and lengths follow from \(L = \beta\gamma\, c\tau\)
+where \(c\tau\) is the tabulated decay length (already a length, e.g. 0.46 mm).
+
+## Computational tools
+
+You will do the calculations, plots, and simulation in Python. If you are new
+to scientific Python, you only need three libraries:
+
+- **NumPy** for arrays and random sampling (`numpy.random` for the toy Monte
+  Carlo).
+- **Matplotlib** (`matplotlib.pyplot`) for the plots.
+- **SciPy** (`scipy.optimize.curve_fit`) for fitting the simulated
+  distribution in Step 8.
+
+The [SciPy Lecture Notes](https://scipy-lectures.org/) and the
+[Matplotlib pyplot tutorial](https://matplotlib.org/stable/tutorials/pyplot.html)
+are good, free starting points if any of these are unfamiliar. A Jupyter
+notebook is a convenient place to work, since it lets you interleave code,
+plots, and explanation, but a plain script is equally acceptable.
 
 ## Physics context
 
