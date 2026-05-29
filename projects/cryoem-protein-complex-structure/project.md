@@ -146,6 +146,54 @@ architecture and interfaces suggest about the complex's function.
 
 ---
 
+## Getting started with the software
+
+Before you begin, confirm access with the PI and review these resources:
+
+### cryoSPARC setup & first steps
+- **Installation & access:** Confirm which compute environment you'll use (local cluster, cloud, etc.) and which version of cryoSPARC is installed.
+- **Tutorial:** Follow the [cryoSPARC Quick Start guide](https://guide.cryosparc.com/start) to get comfortable with the interface.
+- **Example dataset:** Ideally, work through a small public dataset first (available in [cryoSPARC tutorials](https://guide.cryosparc.com/tutorials)) before processing your own data.
+
+### What to expect at each pipeline stage
+
+**Motion Correction & CTF Estimation**
+- *Goal:* Correct for stage drift in the microscope and estimate the contrast transfer function.
+- *How:* In cryoSPARC, see the "Motion Correction" and "CTF Estimation" sections of the [guide](https://guide.cryosparc.com/).
+- *Success looks like:* CTF plots showing clear oscillations; motion correction improves micrograph quality visually.
+
+**Particle Picking**
+- *Goal:* Automatically (or manually) identify particle locations in micrographs.
+- *How:* [cryoSPARC particle picking guide](https://guide.cryosparc.com/processing/tutorials/picking).
+- *Success looks like:* Pick statistics showing reasonable particle density; spot-check by overlaying picks on a few micrographs.
+
+**2D Classification**
+- *Goal:* Sort particles into classes; clean ones keep good signal, bad ones get discarded.
+- *How:* [cryoSPARC 2D classification guide](https://guide.cryosparc.com/processing/tutorials/2d-classification).
+- *Success looks like:* Classes show clear, recognizable views of your complex; class averages improve with more particles.
+
+**Ab Initio Reconstruction & 3D Classification**
+- *Goal:* Build an initial 3D map; refine it by sorting particles into 3D classes.
+- *How:* [Ab initio guide](https://guide.cryosparc.com/) and [3D classification guide](https://guide.cryosparc.com/).
+- *Success looks like:* Map shows secondary structure (helices, sheets); resolution improves with each refinement round.
+
+**3D Refinement**
+- *Goal:* Refine particle alignments to maximize map resolution.
+- *How:* [3D refinement guide](https://guide.cryosparc.com/processing/tutorials/3d-refinement).
+- *Success looks like:* Resolution and FSC improving; map quality visually sharper than ab initio.
+
+### Coot & Phenix: model building and refinement
+- **Coot tutorial:** Start with the [Coot documentation](https://www2.mrc-lmb.cam.ac.uk/personal/pemsley/coot/); the "Getting Started" section has worked examples of fitting a chain into a density map.
+- **Phenix tutorial:** See [Phenix real-space refinement guide](https://phenix-online.org/documentation/reference/real_space_refine.html).
+- **Workflow:** Fit in Coot → refine in Phenix → inspect → adjust in Coot → refine again. Iterate 3–5 times.
+
+### PyMOL: visualization and figures
+- **Getting started:** [PyMOL wiki](https://pymolwiki.org/); focus on loading structures, basic coloring, and rendering.
+- **Making publication figures:** Look for "publication" or "ray-tracing" sections in the wiki; save as high-resolution PNG/PDF.
+
+---
+---
+
 ## Stretch goals
 
 - **Local resolution analysis.** Estimate and visualize local resolution
